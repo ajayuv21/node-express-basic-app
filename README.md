@@ -1,1 +1,1 @@
-# node-mysql-curd-app
+# node-express-basic-app
