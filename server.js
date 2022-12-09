@@ -1,46 +1,59 @@
 var fs = require("fs");
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
+var { createMongoDBDataAPI } = require('mongodb-data-api');
 
+app.use( bodyParser.json() );
 app.use(express.static('public'));
+
+const api = createMongoDBDataAPI({
+   apiKey: 'mAoEjYd86Hlb4jvmIQLV1voMpATzcmdnDSSoS0wGYYWEWAW490Sc1sJczhHUNksY',
+   urlEndpoint: 'https://data.mongodb-api.com/app/data-anhmq/endpoint/data/v1'
+ })
 
 app.get('/index.html', function (req, res) {
    res.sendFile( __dirname + "/" + "index.html" );
 })
-app.get('/cities.html', function (req, res) {
-   res.sendFile( __dirname + "/" + "cities.html" );
-})
 
-
-app.get('/createUser', function (req, res) {
+app.post('/createUser', function (req, res) {
    // Prepare output in JSON format
-   response = {
-      name:req.query.name,
-      email:req.query.email,
-      mobile:req.query.mobile
-   };
-   console.log(response);
-   //res.end(JSON.stringify(response));
-   res.sendFile( __dirname + "/" + "success.html" );
+   api
+   .insertOne({
+     dataSource: 'Cluster0',
+     database: 'pc_db',
+     collection: 'pc_data',
+     document: {
+         user_id: req.body.id,
+         name: req.body.name,
+         email: req.body.email,
+         photoUrl: req.body.photoUrl
+     }
+   })
+   .then((result) => {
+     console.log(result.insertedId);
+     res.writeHead(200, {'Content-Type': 'application/json'});
+     res.end(JSON.stringify(result));
+   }).catch(err => {
+      console.log(err);
+   })
+   
 })
 
 app.get('/listUsers', function (req, res) {
-   fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
-       console.log( data );
-       res.end( data );
-   });
-})
-
-app.get('/getCities', function (req, res) {
-    console.log("city name::", req.query.city)
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write('["Bangalore", "baad"]');
-    res.end();
+   api.$$action('find', {
+      dataSource: 'Cluster0',
+      database: 'pc_db',
+      collection: 'pc_data',
+      filter: {}
+    }).then(result =>{
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify(result));
+    })
 })
 
 var server = app.listen(3000, function () {
    var host = server.address().address
    var port = server.address().port
    console.log("curd app listening at http://%s:%s", host, port)
-
 })
