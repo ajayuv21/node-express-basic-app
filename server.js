@@ -28,6 +28,8 @@ app.post('/jobs', function (req, res) {
          reqId: req.body.reqId,
          title: req.body.title,
          experience: req.body.experience,
+         noticePeriod: req.body.noticePeriod,
+         academics: req.body.academics,
          location: req.body.location,
          skills: req.body.skills,
          jobDescription: req.body.jobDescription
