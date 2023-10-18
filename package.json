@@ -2,7 +2,7 @@
   "name": "curdapp",
   "version": "1.0.0",
   "description": "curd appliaction with node and express",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
