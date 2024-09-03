@@ -7,11 +7,11 @@ var { createMongoDBDataAPI } = require('mongodb-data-api');
 app.use( bodyParser.json() );
 app.use(express.static('public'));
 
-let users = [{id:1, name:"ravi", id:2,name:"siva"}]
+let users = [{id:1, name:"ravi"}, {id:2,name:"siva"}]
+
 app.get('/index.html', function (req, res) {
    res.sendFile( __dirname + "/" + "index.html" );
 })
-
 app.post('/createUser', function (req, res) {
    // Prepare output in JSON format
    let user = {id: req.body.id,
